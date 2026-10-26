@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#120d1c">
+    <meta name="description" content="One scan. Two choices. A little Halloween mischief.">
+    <title>Trick or Treat?</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <div class="night" aria-hidden="true">
+      <div class="moon"></div>
+      <span class="bat bat-one">🦇</span>
+      <span class="bat bat-two">🦇</span>
+      <span class="star star-one">✦</span>
+      <span class="star star-two">✦</span>
+      <div class="ghost"><span class="ghost-eyes"></span></div>
+    </div>
+
+    <main class="game">
+      <div class="game-label"><span aria-hidden="true">✦</span> A LITTLE HALLOWEEN MISCHIEF <span aria-hidden="true">✦</span></div>
+      <div class="card">
+        <section id="landing" class="screen" aria-labelledby="landing-title">
+          <p class="eyebrow">ONE SCAN. TWO CHOICES.</p>
+          <h1 id="landing-title" tabindex="-1"><span>🎃 TRICK</span><span class="or">OR</span><span>TREAT? 🍬</span></h1>
+          <p class="intro">You scanned the code.<br>Now you have to choose...</p>
+          <div class="choices">
+            <button class="button trick playful" data-action="trick">🎃 TRICK <span aria-hidden="true">↗</span></button>
+            <button class="button treat tempting" data-action="treat">🍬 TREAT <span aria-hidden="true">↗</span></button>
+          </div>
+          <p id="wisdom" class="whisper">Choose wisely...</p>
+        </section>
+
+        <section id="trick" class="screen" aria-labelledby="trick-title" hidden>
+          <div class="mascot" aria-hidden="true">🎃</div>
+          <p class="eyebrow">THE MISCHIEF ROUTE</p>
+          <h2 id="trick-title" tabindex="-1">🎃 YOU PICKED TRICK! 🎃</h2>
+          <p class="intro">Are you sure?</p>
+          <p class="aside">The pumpkin accepts no responsibility<br>for your questionable decisions.</p>
+          <div class="choices">
+            <button class="button trick" data-action="confirm">YES, GIVE ME THE TRICK</button>
+            <button class="button secondary" data-action="treat">NOPE! GIVE ME A TREAT</button>
+          </div>
+          <button class="back" data-action="home">← Back to the beginning</button>
+        </section>
+
+        <section id="treat" class="screen" aria-labelledby="treat-title" hidden>
+          <div class="mascot candy" aria-hidden="true">🍬</div>
+          <p class="eyebrow">THE SWEET ESCAPE</p>
+          <h2 id="treat-title" tabindex="-1">🍬 YOU PICKED TREAT! 🍬</h2>
+          <p class="intro">Good choice!</p>
+          <p class="aside">Here's your treat...</p>
+          <div class="choices">
+            <button class="button treat tempting" data-action="reveal">SHOW ME MY TREAT 🍬</button>
+          </div>
+          <p class="whisper">Suspiciously sweet. Absolutely approved.</p>
+          <button class="back" data-action="home">← Back to the beginning</button>
+        </section>
+
+        <section id="countdown" class="screen" aria-labelledby="countdown-title" hidden>
+          <p class="eyebrow">TOO LATE TO BLAME THE QR CODE</p>
+          <h2 id="countdown-title" tabindex="-1">Preparing your trick...</h2>
+          <p id="count" class="count" role="status" aria-live="polite" aria-atomic="true">3...</p>
+          <p id="count-caption" class="aside">Summoning extremely mild chaos.</p>
+          <button class="back" data-action="home">← Escape while you still can</button>
+        </section>
+
+        <section id="leaving" class="screen" aria-labelledby="leaving-title" hidden>
+          <div class="mascot" aria-hidden="true">✨</div>
+          <h2 id="leaving-title" tabindex="-1">Your Halloween surprise is ready!</h2>
+          <p class="intro">Opening your destination...</p>
+          <a id="destination-link" class="button treat" href="https://example.com/" target="_blank" rel="noopener noreferrer" hidden>OPEN MY SURPRISE ↗</a>
+          <button class="back" data-action="home">← Play again</button>
+        </section>
+
+        <p id="error" class="error" role="alert" hidden></p>
+        <noscript><p class="error">This little game needs JavaScript. Enable it in your browser, then reload to choose your surprise.</p></noscript>
+      </div>
+      <footer>
+        <p>ALL BOO. NO BITE. <span aria-hidden="true">👻</span></p>
+        <p id="demo-note" class="demo-note">Demo destinations: example.com</p>
+      </footer>
+    </main>
+  </body>
+</html>
