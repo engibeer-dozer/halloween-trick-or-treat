@@ -69,7 +69,8 @@ Countdown seconds must be a positive integer and reveal delay nonnegative.
 - `media/trick-30s.mp4`: 30-second web copy, approximately 6.6 MB, H.264/AAC,
   720p, with fast-start metadata.
 - `media/halloween_skeleton_web_ready.mp4`: Treat clip.
-- The original longer music-video file is retained but not requested by the app.
+- The original full-length music-video file has been removed; only the short
+  Trick clip is used.
 
 Only publish media you own or have permission to edit and redistribute.
 Files in a public website are publicly accessible, even without a link in its
