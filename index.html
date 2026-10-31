@@ -67,12 +67,17 @@
           <button class="back" data-action="home">← Escape while you still can</button>
         </section>
 
-        <section id="leaving" class="screen" aria-labelledby="leaving-title" hidden>
-          <div class="mascot" aria-hidden="true">✨</div>
-          <h2 id="leaving-title" tabindex="-1">Your Halloween surprise is ready!</h2>
-          <p class="intro">Opening your destination...</p>
-          <a id="destination-link" class="button treat" href="https://example.com/" target="_blank" rel="noopener noreferrer" hidden>OPEN MY SURPRISE ↗</a>
-          <button class="back" data-action="home">← Play again</button>
+        <section id="player" class="screen" aria-labelledby="player-title" hidden>
+          <h2 id="player-title" tabindex="-1">Your Halloween surprise is ready!</h2>
+          <video id="surprise-video" controls playsinline preload="none" aria-label="Halloween surprise video" aria-describedby="video-status">
+            Your browser does not support HTML video.
+          </video>
+          <p id="video-status" class="aside" role="status" aria-live="polite"></p>
+          <div class="choices">
+            <button id="play-video" class="button trick" data-action="play" hidden>TAP TO PLAY ▶</button>
+            <button class="button treat" data-action="replay">REPLAY ↻</button>
+          </div>
+          <button class="back" data-action="home">← Choose again</button>
         </section>
 
         <p id="error" class="error" role="alert" hidden></p>
@@ -80,7 +85,6 @@
       </div>
       <footer>
         <p>ALL BOO. NO BITE. <span aria-hidden="true">👻</span></p>
-        <p id="demo-note" class="demo-note">Demo destinations: example.com</p>
       </footer>
     </main>
   </body>

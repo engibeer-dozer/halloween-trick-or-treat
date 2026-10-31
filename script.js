@@ -1,16 +1,12 @@
 "use strict";
 
-// EDIT YOUR DESTINATIONS HERE. These example.com URLs are placeholders.
-// Use full https:// URLs, or relative paths such as "./treat.html".
+// EDIT YOUR VIDEO PATHS HERE. Keep "./media/" for GitHub Pages project sites.
+// Add more authorized MP4 paths to tricks for a random selection.
 const CONFIG = {
   tricks: [
-    "https://www.google.com/url?sa=i&source=web&rct=j&url=https://www.youtube.com/watch?v%3DdQw4w9WgXcQ%26t%3D29s&ved=2ahUKEwjO-PO_49iXAxUVnWoFHU_7DhcQy_kOegYIAAgLEAE&opi=89978449&cd&psig=AOvVaw007JyiUZo6rz1oFvY8YWja&ust=1793141696234000",
-    // Add more URLs here, separated by commas, for a random trick.
-    // Ideas: a Rickroll link, a family-friendly funny video,
-    // a silly (not genuinely frightening) jump scare, or another webpage.
+    "./media/trick-30s.mp4",
   ],
-  // Ideas: an unlisted family video, cute animals, or another HTML page.
-  treat: "https://photos.google.com/share/AF1QipNSU13tqx186QL1XWVk4Rf_Yfcj8JBYugR9e5V4mzL5zBdbRdv2W0WskFLJGB-amw/photo/AF1QipN9hx-q8UNeIUjXgHZLUU7x-4XfRjwGu_X6wehq?key=OGVrdm1SRzlFLTNIaF9fbWpZQXI5T2ZDU1E0OWlR",
+  treat: "./media/halloween_skeleton_web_ready.mp4",
   countdownSeconds: 3,
   revealDelayMs: 1000,
 };
@@ -20,14 +16,27 @@ const errorMessage = document.getElementById("error");
 const count = document.getElementById("count");
 const caption = document.getElementById("count-caption");
 const wisdom = document.getElementById("wisdom");
+const video = document.getElementById("surprise-video");
+const videoStatus = document.getElementById("video-status");
+const playButton = document.getElementById("play-video");
 let timer;
 let wisdomTimer;
 let activeScreen = "landing";
+let playbackVersion = 0;
+
+function stopVideo() {
+  playbackVersion += 1;
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+  playButton.hidden = true;
+}
 
 function showScreen(id) {
   // Cancel pending redirects whenever someone escapes or chooses another route.
   clearTimeout(timer);
   clearTimeout(wisdomTimer);
+  if (activeScreen === "player" && id !== "player") stopVideo();
   activeScreen = id;
   errorMessage.hidden = true;
   errorMessage.textContent = "";
@@ -42,26 +51,26 @@ function startWhisper() {
   wisdom.textContent = "Choose wisely...";
   wisdomTimer = setTimeout(() => {
     if (activeScreen === "landing") {
-      wisdom.textContent = "The pumpkin says trick. The ghost says snacks.";
+      wisdom.textContent = "The pumpkin says trick. The ghost says treat.";
     }
   }, 6500);
 }
 
 function reportError(error) {
-  console.error("Halloween destination error:", error);
+  console.error("Halloween surprise error:", error);
   errorMessage.textContent = `Couldn't open your surprise. ${error.message}`;
   errorMessage.hidden = false;
 }
 
 function destinationUrl(value) {
   if (typeof value !== "string" || value.trim() === "") {
-    throw new Error("Add a destination URL in CONFIG near the top of script.js.");
+    throw new Error("Add a video path in CONFIG near the top of script.js.");
   }
   const url = new URL(value, document.baseURI);
-  // Reject executable URLs, but allow local HTML files when previewing via file://.
+  // Reject executable URLs, but allow local media when previewing via file://.
   if (!["https:", "http:"].includes(url.protocol) &&
       !(url.protocol === "file:" && location.protocol === "file:")) {
-    throw new Error("Use an https:// URL or a relative HTML page path in CONFIG.");
+    throw new Error("Use an https:// video URL or a relative MP4 path in CONFIG.");
   }
   return url.href;
 }
@@ -75,18 +84,34 @@ function pickTrick() {
   return urls[Math.floor(Math.random() * urls.length)];
 }
 
-function openDestination(url) {
-  const destinationLink = document.getElementById("destination-link");
-  destinationLink.href = url;
-  destinationLink.hidden = true;
-  showScreen("leaving");
+async function playVideo() {
+  const version = ++playbackVersion;
+  playButton.hidden = true;
+  errorMessage.hidden = true;
+  videoStatus.textContent = "Loading your surprise...";
   try {
-    location.assign(url);
+    await video.play();
   } catch (error) {
-    // Only offer another click when the browser explicitly blocks navigation.
-    destinationLink.hidden = false;
-    reportError(error);
+    // Ignore only a playback attempt superseded by navigation or another attempt.
+    if (version !== playbackVersion) return;
+    if (error.name === "NotAllowedError") {
+      videoStatus.textContent = "Your browser needs a tap to start playback.";
+      playButton.hidden = false;
+    } else {
+      videoStatus.textContent = "Playback couldn't start.";
+      reportError(error);
+    }
   }
+}
+
+function showVideo(url, kind) {
+  stopVideo();
+  document.getElementById("player-title").textContent =
+    kind === "trick" ? "🎃 Your trick is here!" : "🍬 Enjoy your treat!";
+  showScreen("player");
+  videoStatus.textContent = "Loading your surprise...";
+  video.src = url;
+  playVideo();
 }
 
 function pulseCount() {
@@ -127,7 +152,7 @@ function startCountdown() {
       count.textContent = "YOU ASKED FOR IT!";
       count.classList.add("reveal");
       caption.textContent = "One perfectly ridiculous surprise, coming right up.";
-      timer = setTimeout(() => openDestination(url), CONFIG.revealDelayMs);
+      timer = setTimeout(() => showVideo(url, "trick"), CONFIG.revealDelayMs);
     }
   }
   timer = setTimeout(tick, 1000);
@@ -140,9 +165,15 @@ document.querySelectorAll("[data-action]").forEach((button) => {
       case "treat": showScreen("treat"); break;
       case "home": showScreen("landing"); break;
       case "confirm": startCountdown(); break;
+      case "play": playVideo(); break;
+      case "replay":
+        if (video.error) video.load();
+        video.currentTime = 0;
+        playVideo();
+        break;
       case "reveal":
         try {
-          openDestination(destinationUrl(CONFIG.treat));
+          showVideo(destinationUrl(CONFIG.treat), "treat");
         } catch (error) {
           reportError(error);
         }
@@ -151,10 +182,22 @@ document.querySelectorAll("[data-action]").forEach((button) => {
   });
 });
 
-// Show the demo note only while an example.com placeholder is still configured.
-document.getElementById("demo-note").hidden = ![
-  ...(Array.isArray(CONFIG.tricks) ? CONFIG.tricks : []), CONFIG.treat,
-].some((value) => typeof value === "string" && /^https?:\/\/example\.com(?:[/?#]|$)/i.test(value));
+video.addEventListener("playing", () => {
+  videoStatus.textContent = "Enjoy! Sound and fullscreen controls are in the player.";
+  playButton.hidden = true;
+  errorMessage.hidden = true;
+});
+video.addEventListener("waiting", () => {
+  if (activeScreen === "player") videoStatus.textContent = "Buffering your surprise...";
+});
+video.addEventListener("ended", () => {
+  videoStatus.textContent = "That's your surprise! Replay or choose again.";
+});
+video.addEventListener("error", () => {
+  if (activeScreen !== "player" || !video.error) return;
+  videoStatus.textContent = "The video couldn't load.";
+  reportError(new Error("Check the MP4 path, connection, and browser-compatible encoding. Try Replay to retry."));
+});
 
 // Don't steal focus on initial load. Focus follows deliberate screen changes.
 startWhisper();
